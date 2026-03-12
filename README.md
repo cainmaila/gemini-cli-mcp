@@ -1,42 +1,62 @@
-# gemini-cli-mcp
+<div align="center">
+  <img src="./assets/banner.svg" alt="Gemini CLI MCP Banner" width="100%" />
 
-gemini-cli-mcp is an MCP server that delegates work to your locally installed Gemini CLI and returns both the final result and the execution metadata to the MCP client.
+  # 🤖 Gemini CLI MCP Server
 
-It is designed for AI-to-AI delegation scenarios where another assistant wants to hand off a task, get a direct answer back, and still retain enough process detail for debugging.
+  *Seamless AI-to-AI Delegation via Local Gemini CLI*
 
-## Why Use It
+  [![npm version](https://img.shields.io/npm/v/gemini-cli-mcp.svg?style=flat-square)](https://www.npmjs.org/package/gemini-cli-mcp)
+  [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](https://opensource.org/licenses/MIT)
+  [![Node.js Version](https://img.shields.io/node/v/gemini-cli-mcp.svg?style=flat-square)](#requirements)
 
-- Uses your existing local Gemini CLI installation and authentication
-- Runs headless over stdio, so it fits standard MCP client setups
-- Returns structured results instead of collapsing failures into generic errors
-- Provides a task-oriented interface for direct answers and a lower-level prompt interface when you need exact control
-- Supports image generation through the local nanobanana extension
-- Can inspect the local Gemini CLI environment to see available commands, extensions, skills, and MCP servers
+  [**English**](./README.md) · [**繁體中文**](./README.zh-TW.md)
+</div>
 
-## Requirements
+---
 
-- Node.js 18.18 or newer
-- A locally installed Gemini CLI that can run unattended
-- Gemini authentication already completed on the local machine
+## 🌟 Why Gemini CLI MCP?
 
-## Install
+`gemini-cli-mcp` is an advanced Model Context Protocol (MCP) server that empowers your AI assistants by delegating complex tasks to your locally installed Gemini CLI. 
+
+Rather than collapsing failures into generic errors, this server returns **structured results along with execution metadata**, making it an essential tool for robust AI-to-AI handoffs and deep debugging.
+
+### ✨ Key Features
+
+- **🚀 Zero-Friction Auth**: Transparently utilizes your existing local Gemini CLI setup and credentials.
+- **🔌 Standard MCP Ready**: Runs headless over `stdio`, effortlessly integrating with standard MCP client setups.
+- **🛠️ Task-Oriented & Flexible**: Choose `executeTask` for direct answers, or drop down to `executePrompt` for precise control.
+- **🎨 Native Image Generation**: Harnesses your local `nanobanana` extension to generate and retrieve images seamlessly.
+- **🔍 Environment Inspection**: Instantly discover available commands, extensions, skills, and MCP servers on the local machine.
+
+---
+
+## 📦 Installation
+
+Getting started is quick and easy. Ensure you have [Node.js 18.18+](https://nodejs.org/) installed along with a configured local Gemini CLI.
 
 ```bash
+# Install dependencies
 npm install
+
+# Build the project
 npm run build
 ```
 
-## Run
+---
+
+## 🚀 Quick Start & Usage
+
+### Running the Server
+
+Since this is an MCP server, it is designed to communicate over `stdio` and should be launched by your MCP client.
 
 ```bash
 node build/index.js
 ```
 
-The server communicates over stdio and is meant to be launched by an MCP client.
+### Client Configuration Example
 
-## MCP Client Setup
-
-Example MCP server entry:
+Add the following to your AI assistant's MCP configuration:
 
 ```json
 {
@@ -51,27 +71,28 @@ Example MCP server entry:
 
 If you package or install this elsewhere, point the client to the built entry file at `build/index.js`.
 
-## Available Tools
+---
 
-### `executeTask`
+## 🛠️ Available Tools
 
-Recommended default for upstream AI systems. Use this when you want Gemini CLI to complete a task and return a directly usable answer.
+<details>
+<summary><b><code>executeTask</code> (Recommended)</b></summary>
 
-Example input:
+Best for upstream AI systems. Hands off a task to the Gemini CLI and returns a ready-to-use answer. Auto-applies edit approvals when necessary!
 
+**Input Example:**
 ```json
 {
-  "task": "請查詢台北市今天的天氣，並用繁體中文簡短回答：天氣概況、溫度、降雨機率、以及一個外出建議。",
-  "expectedOutput": "直接回答，不要寫前言。",
+  "task": "Query today's weather in Taipei and provide a short summary.",
+  "expectedOutput": "Direct answer, no intro.",
   "timeoutMs": 180000
 }
 ```
 
-Example output:
-
+**Output Example:**
 ```json
 {
-  "answer": "台北今天多雲到晴，約 11°C 至 19°C，降雨機率低，建議早晚加外套。",
+  "answer": "...",
   "ok": true,
   "stdout": "...",
   "stderr": "...",
@@ -79,15 +100,14 @@ Example output:
   "elapsedMs": 23053
 }
 ```
+</details>
 
-When the task appears to modify files, the server automatically uses `--approval-mode auto_edit` unless the caller explicitly overrides it.
+<details>
+<summary><b><code>executePrompt</code></b></summary>
 
-### `executePrompt`
+A lower-level interface designed for callers who demand exact prompt control.
 
-Lower-level interface for callers that want exact prompt control.
-
-Example input:
-
+**Input Example:**
 ```json
 {
   "prompt": "Summarize the current repository",
@@ -96,8 +116,7 @@ Example input:
 }
 ```
 
-Example output:
-
+**Output Example:**
 ```json
 {
   "ok": true,
@@ -108,15 +127,14 @@ Example output:
   "elapsedMs": 1532
 }
 ```
+</details>
 
-### `executeImageTask`
+<details>
+<summary><b><code>executeImageTask</code></b></summary>
 
-Stable image-generation interface backed by the local nanobanana extension.
+Flawless image-generation backed by the local `nanobanana` extension. Bypasses interactive prompts automatically!
 
-This tool enables the `nanobanana` extension automatically and defaults to `approvalMode: "yolo"` so headless image generation can complete without interactive approval prompts.
-
-Example input:
-
+**Input Example:**
 ```json
 {
   "prompt": "a cute orange cat portrait, clean light background",
@@ -125,8 +143,7 @@ Example input:
 }
 ```
 
-Example output:
-
+**Output Example:**
 ```json
 {
   "ok": true,
@@ -137,43 +154,43 @@ Example output:
   "elapsedMs": 12000
 }
 ```
+</details>
 
-### `inspectGeminiCli`
+<details>
+<summary><b><code>inspectGeminiCli</code></b></summary>
 
-Use this to discover what the local Gemini CLI environment can currently use.
+Discover your AI environment's capabilities on the fly. Returns top-level commands, installed extensions, available skills, and configured MCP servers.
 
-It reports:
-
-- top-level Gemini CLI commands
-- installed extensions
-- available skills
-- configured MCP servers
-- an optional model-reported summary of active tools
-- a structured `modelReportedSummary` with extracted built-in tool names, extensions, skills, and MCP server names
-
-Example input:
-
+**Input Example:**
 ```json
 {
   "includeModelReportedTools": true,
   "timeoutMs": 60000
 }
 ```
+</details>
 
-## Environment Overrides
+---
 
-- `GEMINI_CLI_PATH`: overrides the executable path. Default is `gemini`.
-- `GEMINI_PROMPT_FLAG`: overrides the prompt flag. Default is `-p`.
-- `GEMINI_MODEL_FLAG`: overrides the model flag. Default is `--model`.
+## ⚙️ Environment Overrides
 
-## Notes
+Tailor the server to your specific environment simply by setting these variables:
 
-- This server does not implement Gemini authentication.
-- If the local Gemini CLI is missing or broken, tool calls return structured failure details.
-- `executeTask` is the best general-purpose entry point for most AI delegation use cases.
-- `executeImageTask` is the best entry point when the caller needs file paths for generated images.
-- `inspectGeminiCli` is useful before delegating specialized tasks that depend on extensions, skills, or MCP servers.
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `GEMINI_CLI_PATH` | Path to the Gemini executable | `gemini` |
+| `GEMINI_PROMPT_FLAG` | The flag used for passing prompts | `-p` |
+| `GEMINI_MODEL_FLAG` | The flag used to specify the model | `--model` |
 
-## Development
+---
 
-Development and contributor documentation is available in [DEVELOPMENT.md](DEVELOPMENT.md).
+## 📚 Notes & Contributing
+
+- **Authentication**: This server relies on your existing local Gemini CLI authentication.
+- **Resilience**: If the local CLI is missing or broken, you will receive structured failure details—never a silent crash.
+- **Want to build with us?** Check out our developer guide in [DEVELOPMENT.md](DEVELOPMENT.md).
+
+<br/>
+<div align="center">
+  <i>Built for the next generation of AI collaboration.</i>
+</div>
