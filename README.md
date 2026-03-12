@@ -1,22 +1,23 @@
 <div align="center">
   <img src="./assets/banner.svg" alt="Gemini CLI MCP Banner" width="100%" />
 
-  # 🤖 Gemini CLI MCP Server
+# 🤖 Gemini CLI MCP Server
 
-  *Seamless AI-to-AI Delegation via Local Gemini CLI*
+_Seamless AI-to-AI Delegation via Local Gemini CLI_
 
-  [![npm version](https://img.shields.io/npm/v/@cainmaila/gemini-cli-mcp.svg?style=flat-square)](https://www.npmjs.org/package/@cainmaila/gemini-cli-mcp)
-  [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](https://opensource.org/licenses/MIT)
-  [![Node.js Version](https://img.shields.io/node/v/gemini-cli-mcp.svg?style=flat-square)](#requirements)
+[![npm version](https://img.shields.io/npm/v/@cainmaila/gemini-cli-mcp.svg?style=flat-square)](https://www.npmjs.org/package/@cainmaila/gemini-cli-mcp)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](https://opensource.org/licenses/MIT)
+[![Node.js Version](https://img.shields.io/node/v/gemini-cli-mcp.svg?style=flat-square)](#requirements)
 
-  [**English**](./README.md) · [**繁體中文**](./README.zh-TW.md)
+[**English**](./README.md) · [**繁體中文**](./README.zh-TW.md)
+
 </div>
 
 ---
 
 ## 🌟 Why Gemini CLI MCP?
 
-`gemini-cli-mcp` is an advanced Model Context Protocol (MCP) server that empowers your AI assistants by delegating complex tasks to your locally installed Gemini CLI. 
+`gemini-cli-mcp` is an advanced Model Context Protocol (MCP) server that empowers your AI assistants by delegating complex tasks to your locally installed Gemini CLI.
 
 Rather than collapsing failures into generic errors, this server returns **structured results along with execution metadata**, making it an essential tool for robust AI-to-AI handoffs and deep debugging.
 
@@ -32,15 +33,24 @@ Rather than collapsing failures into generic errors, this server returns **struc
 
 ## 📦 Installation
 
-Getting started is quick and easy. Ensure you have [Node.js 18.18+](https://nodejs.org/) installed along with a configured local Gemini CLI.
+For normal usage, install the published package globally or run it through your package manager. Ensure you have [Node.js 18.18+](https://nodejs.org/) installed along with a configured local Gemini CLI.
 
 ```bash
-# Install dependencies
-npm install
+# npm
+npm install -g @cainmaila/gemini-cli-mcp
 
-# Build the project
-npm run build
+# pnpm
+pnpm add -g @cainmaila/gemini-cli-mcp
+
+# one-off execution without a global install
+npx -y @cainmaila/gemini-cli-mcp
 ```
+
+The published package name is `@cainmaila/gemini-cli-mcp`, but the installed executable name is `gemini-cli-mcp`.
+
+If you use `pnpm add -g`, make sure your MCP client can see your `PNPM_HOME`/global bin directory. Some desktop MCP clients do not inherit the same `PATH` as your interactive shell, which can make `gemini-cli-mcp` look missing even though the package is installed.
+
+If you want to work on this repository itself instead of using the published package, use the local development flow in [DEVELOPMENT.md](DEVELOPMENT.md).
 
 ---
 
@@ -51,7 +61,7 @@ npm run build
 Since this is an MCP server, it is designed to communicate over `stdio` and should be launched by your MCP client.
 
 ```bash
-node build/index.js
+gemini-cli-mcp
 ```
 
 ### Client Configuration Example
@@ -62,14 +72,37 @@ Add the following to your AI assistant's MCP configuration:
 {
   "mcpServers": {
     "gemini-cli": {
-      "command": "node",
-      "args": ["/absolute/path/to/gemini-cli-mcp/build/index.js"]
+      "command": "gemini-cli-mcp"
     }
   }
 }
 ```
 
-If you package or install this elsewhere, point the client to the built entry file at `build/index.js`.
+If your MCP client cannot resolve global binaries reliably, use one of these alternatives instead:
+
+```json
+{
+  "mcpServers": {
+    "gemini-cli": {
+      "command": "npx",
+      "args": ["-y", "@cainmaila/gemini-cli-mcp"]
+    }
+  }
+}
+```
+
+```json
+{
+  "mcpServers": {
+    "gemini-cli": {
+      "command": "node",
+      "args": ["/absolute/path/to/installed/package/build/index.js"]
+    }
+  }
+}
+```
+
+Running `gemini-cli-mcp` directly in a terminal is only useful as a smoke test. It will wait for MCP traffic over `stdio`, so it may look idle until a client connects.
 
 ---
 
@@ -81,6 +114,7 @@ If you package or install this elsewhere, point the client to the built entry fi
 Best for upstream AI systems. Hands off a task to the Gemini CLI and returns a ready-to-use answer. Auto-applies edit approvals when necessary!
 
 **Input Example:**
+
 ```json
 {
   "task": "Query today's weather in Taipei and provide a short summary.",
@@ -90,6 +124,7 @@ Best for upstream AI systems. Hands off a task to the Gemini CLI and returns a r
 ```
 
 **Output Example:**
+
 ```json
 {
   "answer": "...",
@@ -100,6 +135,7 @@ Best for upstream AI systems. Hands off a task to the Gemini CLI and returns a r
   "elapsedMs": 23053
 }
 ```
+
 </details>
 
 <details>
@@ -108,6 +144,7 @@ Best for upstream AI systems. Hands off a task to the Gemini CLI and returns a r
 A lower-level interface designed for callers who demand exact prompt control.
 
 **Input Example:**
+
 ```json
 {
   "prompt": "Summarize the current repository",
@@ -117,6 +154,7 @@ A lower-level interface designed for callers who demand exact prompt control.
 ```
 
 **Output Example:**
+
 ```json
 {
   "ok": true,
@@ -127,6 +165,7 @@ A lower-level interface designed for callers who demand exact prompt control.
   "elapsedMs": 1532
 }
 ```
+
 </details>
 
 <details>
@@ -135,6 +174,7 @@ A lower-level interface designed for callers who demand exact prompt control.
 Flawless image-generation backed by the local `nanobanana` extension. Bypasses interactive prompts automatically!
 
 **Input Example:**
+
 ```json
 {
   "prompt": "a cute orange cat portrait, clean light background",
@@ -144,6 +184,7 @@ Flawless image-generation backed by the local `nanobanana` extension. Bypasses i
 ```
 
 **Output Example:**
+
 ```json
 {
   "ok": true,
@@ -154,6 +195,7 @@ Flawless image-generation backed by the local `nanobanana` extension. Bypasses i
   "elapsedMs": 12000
 }
 ```
+
 </details>
 
 <details>
@@ -162,12 +204,14 @@ Flawless image-generation backed by the local `nanobanana` extension. Bypasses i
 Discover your AI environment's capabilities on the fly. Returns top-level commands, installed extensions, available skills, and configured MCP servers.
 
 **Input Example:**
+
 ```json
 {
   "includeModelReportedTools": true,
   "timeoutMs": 60000
 }
 ```
+
 </details>
 
 ---
@@ -176,11 +220,11 @@ Discover your AI environment's capabilities on the fly. Returns top-level comman
 
 Tailor the server to your specific environment simply by setting these variables:
 
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `GEMINI_CLI_PATH` | Path to the Gemini executable | `gemini` |
-| `GEMINI_PROMPT_FLAG` | The flag used for passing prompts | `-p` |
-| `GEMINI_MODEL_FLAG` | The flag used to specify the model | `--model` |
+| Variable             | Description                        | Default   |
+| -------------------- | ---------------------------------- | --------- |
+| `GEMINI_CLI_PATH`    | Path to the Gemini executable      | `gemini`  |
+| `GEMINI_PROMPT_FLAG` | The flag used for passing prompts  | `-p`      |
+| `GEMINI_MODEL_FLAG`  | The flag used to specify the model | `--model` |
 
 ---
 

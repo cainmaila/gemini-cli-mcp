@@ -1,15 +1,16 @@
 <div align="center">
   <img src="./assets/banner.svg" alt="Gemini CLI MCP Banner" width="100%" />
 
-  # 🤖 Gemini CLI MCP Server
+# 🤖 Gemini CLI MCP Server
 
-  *輕量、無縫的 AI 本地代理協作工具*
+_輕量、無縫的 AI 本地代理協作工具_
 
-  [![npm version](https://img.shields.io/npm/v/gemini-cli-mcp.svg?style=flat-square)](https://www.npmjs.org/package/gemini-cli-mcp)
-  [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](https://opensource.org/licenses/MIT)
-  [![Node.js Version](https://img.shields.io/node/v/gemini-cli-mcp.svg?style=flat-square)](#要求條件)
+[![npm version](https://img.shields.io/npm/v/gemini-cli-mcp.svg?style=flat-square)](https://www.npmjs.org/package/gemini-cli-mcp)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](https://opensource.org/licenses/MIT)
+[![Node.js Version](https://img.shields.io/node/v/gemini-cli-mcp.svg?style=flat-square)](#要求條件)
 
-  [**English**](./README.md) · [**繁體中文**](./README.zh-TW.md)
+[**English**](./README.md) · [**繁體中文**](./README.zh-TW.md)
+
 </div>
 
 ---
@@ -32,15 +33,24 @@
 
 ## 📦 安裝說明
 
-開始使用非常簡單。請確認你已安裝了 [Node.js 18.18+](https://nodejs.org/) 以及配置好並能自動運行的本地端 Gemini CLI 驗證。
+一般使用情境下，應直接安裝已發佈的 npm 套件，或透過套件管理器即時執行。請先確認你已安裝 [Node.js 18.18+](https://nodejs.org/) 並完成本地 Gemini CLI 驗證設定。
 
 ```bash
-# 安裝相依套件
-npm install
+# npm 全域安裝
+npm install -g @cainmaila/gemini-cli-mcp
 
-# 編譯專案
-npm run build
+# pnpm 全域安裝
+pnpm add -g @cainmaila/gemini-cli-mcp
+
+# 不做全域安裝，直接執行
+npx -y @cainmaila/gemini-cli-mcp
 ```
+
+發佈到 npm 的套件名稱是 `@cainmaila/gemini-cli-mcp`，但安裝後實際可執行的命令名稱是 `gemini-cli-mcp`。
+
+如果你使用 `pnpm add -g`，要特別確認 MCP 客戶端啟動時看得到你的 `PNPM_HOME` 或全域 bin 目錄。許多桌面型 MCP client 不會沿用互動式 shell 的 `PATH`，因此即使安裝成功，也可能出現找不到 `gemini-cli-mcp` 的錯誤。
+
+如果你的目的不是使用已發佈套件，而是要開發這個 repository 本身，請改看 [DEVELOPMENT.md](DEVELOPMENT.md) 的本地開發流程。
 
 ---
 
@@ -51,7 +61,7 @@ npm run build
 由於這是一個 MCP 伺服器，它被設計成透過 `stdio` 溝通，並且應該由你的 MCP 客戶端應用程式來啟動：
 
 ```bash
-node build/index.js
+gemini-cli-mcp
 ```
 
 ### MCP 客戶端設定範例
@@ -62,14 +72,37 @@ node build/index.js
 {
   "mcpServers": {
     "gemini-cli": {
-      "command": "node",
-      "args": ["/絕對路徑/到/你的/gemini-cli-mcp/build/index.js"]
+      "command": "gemini-cli-mcp"
     }
   }
 }
 ```
 
-如果將此伺服器打包或安裝在其他地方，請確保用戶端指向編譯好的 `build/index.js`。
+如果你的 MCP client 對全域命令的 PATH 解析不穩定，建議改用以下其中一種寫法：
+
+```json
+{
+  "mcpServers": {
+    "gemini-cli": {
+      "command": "npx",
+      "args": ["-y", "@cainmaila/gemini-cli-mcp"]
+    }
+  }
+}
+```
+
+```json
+{
+  "mcpServers": {
+    "gemini-cli": {
+      "command": "node",
+      "args": ["/已安裝套件的絕對路徑/build/index.js"]
+    }
+  }
+}
+```
+
+若你直接在終端機執行 `gemini-cli-mcp`，那通常只能當 smoke test。它會持續等待來自 MCP client 的 `stdio` 通訊，所以看起來像「沒反應」其實是正常行為。
 
 ---
 
@@ -81,6 +114,7 @@ node build/index.js
 這是上游 AI 系統的最佳預設工具。當你需要 Gemini CLI 幫你完成一項任務並直接回傳解答時，選這個就對了！如果任務牽涉修改檔案，伺服器還會自動啟用 Auto-Edit 核准模式。
 
 **輸入範例：**
+
 ```json
 {
   "task": "請查詢台北市今天的天氣，並用繁體中文簡短回答：天氣概況、溫度、降雨機率、以及一個外出建議。",
@@ -90,6 +124,7 @@ node build/index.js
 ```
 
 **輸出範例：**
+
 ```json
 {
   "answer": "台北今天多雲到晴，約 11°C 至 19°C，降雨機率低，建議早晚加外套。",
@@ -100,6 +135,7 @@ node build/index.js
   "elapsedMs": 23053
 }
 ```
+
 </details>
 
 <details>
@@ -108,6 +144,7 @@ node build/index.js
 專為需要精確控制 Prompt 參數的呼叫者所準備的底層介面。
 
 **輸入範例：**
+
 ```json
 {
   "prompt": "Summarize the current repository",
@@ -117,6 +154,7 @@ node build/index.js
 ```
 
 **輸出範例：**
+
 ```json
 {
   "ok": true,
@@ -127,6 +165,7 @@ node build/index.js
   "elapsedMs": 1532
 }
 ```
+
 </details>
 
 <details>
@@ -135,6 +174,7 @@ node build/index.js
 支援本地 `nanobanana` 擴充套件的穩健圖片生成介面。預設會啟用 YOLO 模式以自動繞過互動式認證提示，實現全自動生成！
 
 **輸入範例：**
+
 ```json
 {
   "prompt": "一隻可愛的橘貓肖像，乾淨明亮的背景",
@@ -144,6 +184,7 @@ node build/index.js
 ```
 
 **輸出範例：**
+
 ```json
 {
   "ok": true,
@@ -154,6 +195,7 @@ node build/index.js
   "elapsedMs": 12000
 }
 ```
+
 </details>
 
 <details>
@@ -162,12 +204,14 @@ node build/index.js
 用來動態探索本地 Gemini CLI 環境的利器。它會掃描並回報頂層指令、擴充套件、可用 Skills 以及所有的 MCP 伺服器狀態。
 
 **輸入範例：**
+
 ```json
 {
   "includeModelReportedTools": true,
   "timeoutMs": 60000
 }
 ```
+
 </details>
 
 ---
@@ -176,11 +220,11 @@ node build/index.js
 
 若需要客製化伺服器行為，你可以設定以下環境變數：
 
-| 變數名稱 | 說明 | 預設值 |
-|----------|-------------|---------|
-| `GEMINI_CLI_PATH` | 覆蓋 Gemini CLI 執行檔路徑 | `gemini` |
-| `GEMINI_PROMPT_FLAG` | 覆蓋傳遞 Prompt 使用的 Flag | `-p` |
-| `GEMINI_MODEL_FLAG` | 覆蓋指定外部模型的 Flag | `--model` |
+| 變數名稱             | 說明                        | 預設值    |
+| -------------------- | --------------------------- | --------- |
+| `GEMINI_CLI_PATH`    | 覆蓋 Gemini CLI 執行檔路徑  | `gemini`  |
+| `GEMINI_PROMPT_FLAG` | 覆蓋傳遞 Prompt 使用的 Flag | `-p`      |
+| `GEMINI_MODEL_FLAG`  | 覆蓋指定外部模型的 Flag     | `--model` |
 
 ---
 

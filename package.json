@@ -1,6 +1,6 @@
 {
   "name": "@cainmaila/gemini-cli-mcp",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "MCP server that delegates prompt execution to a locally installed Gemini CLI",
   "type": "module",
   "bin": {
