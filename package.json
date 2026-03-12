@@ -1,5 +1,5 @@
 {
-  "name": "gemini-cli-mcp",
+  "name": "@cainmaila/gemini-cli-mcp",
   "version": "1.0.0",
   "description": "MCP server that delegates prompt execution to a locally installed Gemini CLI",
   "type": "module",
@@ -7,7 +7,9 @@
     "gemini-cli-mcp": "./build/index.js"
   },
   "files": [
-    "build"
+    "build",
+    "LICENSE",
+    "README.md"
   ],
   "engines": {
     "node": ">=18.18.0"
@@ -17,6 +19,29 @@
     "dev": "tsx src/index.ts",
     "lint": "tsc --noEmit -p tsconfig.json",
     "test": "vitest run"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "gemini",
+    "gemini-cli",
+    "ai",
+    "llm",
+    "claude",
+    "ai-delegation"
+  ],
+  "author": {
+    "name": "cain.chu",
+    "email": "cain.chu@dgiots.com"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cainmaila/gemini-cli-mcp.git"
+  },
+  "homepage": "https://github.com/cainmaila/gemini-cli-mcp#readme",
+  "bugs": {
+    "url": "https://github.com/cainmaila/gemini-cli-mcp/issues"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.27.1",

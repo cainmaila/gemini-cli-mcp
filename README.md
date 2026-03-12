@@ -5,7 +5,7 @@
 
   *Seamless AI-to-AI Delegation via Local Gemini CLI*
 
-  [![npm version](https://img.shields.io/npm/v/gemini-cli-mcp.svg?style=flat-square)](https://www.npmjs.org/package/gemini-cli-mcp)
+  [![npm version](https://img.shields.io/npm/v/@cainmaila/gemini-cli-mcp.svg?style=flat-square)](https://www.npmjs.org/package/@cainmaila/gemini-cli-mcp)
   [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](https://opensource.org/licenses/MIT)
   [![Node.js Version](https://img.shields.io/node/v/gemini-cli-mcp.svg?style=flat-square)](#requirements)
 
